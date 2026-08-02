@@ -1,53 +1,61 @@
-# Hi, I'm Chhaya Pathania 👋
+# Smart Financial Recovery Platform
 
-FP&A | Financial Strategy | Financial Modeling | Product Strategy
-
-I enjoy solving business problems by combining finance, strategy, and product thinking.
-
-## 🚀 Areas of Interest
-
-- Financial Planning & Analysis (FP&A)
-- Financial Modeling
-- Strategic Finance
-- Product Strategy
-- Business Case Development
-- Digital Lending
-- Excel Automation
-
-## 📂 Featured Portfolio Project
-
-### Smart Financial Recovery Platform
-
-An end-to-end portfolio project demonstrating how a new financial product can be evaluated from strategy through executive approval.
-
-### Highlights
-
-- Business Strategy
-- Market Sizing
-- Product Proposal
-- Executive Presentation
-- Financial Model
-- Unit Economics
-- Risk Framework
-- Interactive Product Prototype
-
-## 🛠 Skills
-
-- Excel
-- Power BI
-- Financial Modeling
-- Business Strategy
-- Product Management
-- PowerPoint
-- SQL (Learning)
-- Python (Learning)
-
-## 📫 Connect
-
-- LinkedIn: *(Add your LinkedIn profile URL here)*
-- Email: *(Add your professional email address here)*
+An independent portfolio project demonstrating FP&A, Product Strategy, Financial Modeling, and Executive Storytelling.
 
 ---
 
-⭐ Thanks for visiting my GitHub profile!# smart-financial-recovery-platform-product
-A portfolio project showcasing FP&amp;A, Financial Modeling, Product Strategy, and Executive Storytelling.
+## Problem
+
+Customers often manage multiple EMIs across several lenders, increasing financial stress and raising delinquency risk.
+
+---
+
+## Solution
+
+Smart Financial Recovery Platform
+
+Module 2:
+Smart EMI Consolidation Loan
+
+One Loan
+
+One EMI
+
+Direct settlement to creditors
+
+---
+
+## Deliverables
+
+- Product Strategy
+- Business Proposal
+- Executive Presentation
+- Financial Model
+- Unit Economics
+- Go-to-Market Strategy
+- Governance Framework
+- Interactive HTML Prototype
+
+---
+
+## Technologies
+
+- Excel
+- PowerPoint
+- HTML
+- CSS
+- Financial Modeling
+
+---
+
+## Preview
+
+(Add screenshots here)
+
+---
+
+## Disclaimer
+
+This is an independent portfolio project.
+
+All company names, customer data, and financial assumptions are illustrative and created for learning and portfolio purposes only.
