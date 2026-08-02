@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart EMI Consolidation Loan — Clickable Prototype (Module 2, Smart Financial Recovery Platform)</title>
+<style>
+  :root{
+    --navy:#1E2761;
+    --navy-dark:#141A47;
+    --ice:#CADCFC;
+    --ice-soft:#EEF3FD;
+    --gold:#B8860B;
+    --gold-soft:#F6ECD6;
+    --green:#2E7D32;
+    --green-soft:#E6F3E7;
+    --red:#A3342A;
+    --red-soft:#F7E7E5;
+    --ink:#1A1A2E;
+    --muted:#6B7280;
+    --white:#ffffff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(circle at 15% 10%, #24306e 0%, transparent 45%),
+      radial-gradient(circle at 85% 90%, #24306e 0%, transparent 45%),
+      var(--navy-dark);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:32px 16px 60px;
+    color:var(--ink);
+  }
+  .rail{
+    color:var(--ice);
+    text-align:center;
+    max-width:640px;
+    margin-bottom:22px;
+  }
+  .rail .eyebrow{
+    font-size:12px;
+    letter-spacing:3px;
+    color:var(--gold);
+    font-weight:700;
+    text-transform:uppercase;
+  }
+  .rail h1{
+    font-size:24px;
+    margin:6px 0 8px;
+    font-weight:700;
+    color:var(--white);
+  }
+  .rail p{
+    font-size:13.5px;
+    color:#B9C4E8;
+    line-height:1.5;
+    margin:0;
+  }
+
+  .stage{
+    display:flex;
+    gap:36px;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+
+  /* phone frame */
+  .phone{
+    width:340px;
+    height:700px;
+    background:var(--navy-dark);
+    border-radius:44px;
+    padding:14px;
+    box-shadow:0 30px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.05);
+    position:relative;
+    flex-shrink:0;
+  }
+  .notch{
+    position:absolute;
+    top:14px; left:50%;
+    transform:translateX(-50%);
+    width:120px; height:22px;
+    background:var(--navy-dark);
+    border-radius:0 0 16px 16px;
+    z-index:5;
+  }
+  .screen{
+    width:100%;
+    height:100%;
+    background:var(--ice-soft);
+    border-radius:32px;
+    overflow:hidden;
+    position:relative;
+  }
+  .screen-content{
+    position:absolute;
+    inset:0;
+    display:none;
+    flex-direction:column;
+    overflow-y:auto;
+  }
+  .screen-content.active{ display:flex; }
+  .status-bar{
+    height:44px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 24px;
+    font-size:12px;
+    font-weight:600;
+    color:var(--white);
+    background:var(--navy);
+  }
+  .topbar{
+    background:var(--navy);
+    color:var(--white);
+    padding:6px 20px 16px;
+    flex-shrink:0;
+  }
+  .topbar .brand{ font-size:11px; letter-spacing:2px; color:var(--ice); font-weight:700; }
+  .topbar h2{ margin:4px 0 0; font-size:19px; font-weight:700; }
+  .body-pad{ padding:16px 18px 20px; flex:1; }
+
+  .card{
+    background:var(--white);
+    border-radius:14px;
+    padding:14px 16px;
+    box-shadow:0 4px 14px rgba(30,39,97,0.08);
+    margin-bottom:12px;
+  }
+  .btn{
+    display:block;
+    width:100%;
+    text-align:center;
+    background:var(--gold);
+    color:var(--white);
+    font-weight:700;
+    font-size:14.5px;
+    padding:13px;
+    border-radius:12px;
+    border:none;
+    cursor:pointer;
+    margin-top:6px;
+  }
+  .btn.secondary{
+    background:transparent;
+    color:var(--navy);
+    border:1.5px solid var(--navy);
+  }
+  .btn.ghost{
+    background:transparent;
+    color:var(--muted);
+    font-weight:600;
+    font-size:12.5px;
+    padding:8px;
+  }
+  .pill{
+    display:inline-block;
+    font-size:10.5px;
+    font-weight:700;
+    padding:3px 9px;
+    border-radius:20px;
+    letter-spacing:0.5px;
+  }
+  .pill.amber{ background:var(--gold-soft); color:var(--gold); }
+  .pill.green{ background:var(--green-soft); color:var(--green); }
+  .pill.red{ background:var(--red-soft); color:var(--red); }
+
+  .spinner{
+    width:46px; height:46px; margin:18px auto 4px;
+    border-radius:50%;
+    border:4px solid #E9ECF5; border-top-color:var(--gold);
+    animation:spin 0.9s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .big-icon{ font-size:38px; text-align:center; margin:6px 0 2px; }
+
+  .status-track{ display:flex; flex-direction:column; gap:0; margin:4px 0 8px; }
+  .status-track .st-row{ display:flex; gap:10px; align-items:flex-start; padding:2px 0; }
+  .status-track .st-dot{
+    width:18px; height:18px; border-radius:50%; flex-shrink:0; margin-top:1px;
+    display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; color:#fff;
+  }
+  .status-track .st-dot.done{ background:var(--green); }
+  .status-track .st-dot.current{ background:var(--gold); }
+  .status-track .st-dot.todo{ background:#D7DBE8; }
+  .status-track .st-line{ width:2px; flex:1; background:#D7DBE8; margin:2px 0 2px 8px; min-height:16px; }
+  .status-track .st-label{ font-size:12.5px; font-weight:600; }
+  .status-track .st-sub{ font-size:11px; color:var(--muted); margin-top:1px; }
+
+  .link-btn{
+    background:none; border:none; color:var(--navy); font-size:11.5px; font-weight:700;
+    text-decoration:underline; cursor:pointer; padding:4px 0; display:inline-block;
+  }
+  .reason-list{ margin:8px 0 0; padding-left:18px; font-size:12.5px; color:var(--ink); line-height:1.6; }
+  .field{ margin-bottom:10px; }
+  .field label{ display:block; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+  .upload-row{
+    display:flex; justify-content:space-between; align-items:center;
+    border:1.5px dashed #C9CEE0; border-radius:10px; padding:10px 12px; font-size:12.5px; color:var(--navy); margin-bottom:8px;
+  }
+  textarea.notefield{
+    width:100%; border:1.5px solid #DDE1EE; border-radius:10px; padding:10px; font-size:12.5px;
+    font-family:inherit; resize:none; min-height:56px;
+  }
+
+  /* screen 1: lock/notification */
+  .lockscreen{
+    background:linear-gradient(180deg,#1E2761 0%, #2C3A82 60%, #3A4B9C 100%);
+    color:var(--white);
+    justify-content:flex-start;
+    align-items:center;
+    padding-top:70px;
+  }
+  .lock-time{ font-size:58px; font-weight:300; letter-spacing:1px; }
+  .lock-date{ font-size:14px; color:#C9D3F2; margin-top:2px; }
+  .notif{
+    background:rgba(255,255,255,0.96);
+    color:var(--ink);
+    width:88%;
+    margin-top:56px;
+    border-radius:16px;
+    padding:13px 14px;
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    cursor:pointer;
+    box-shadow:0 8px 24px rgba(0,0,0,0.25);
+    animation: slideIn .5s ease;
+  }
+  @keyframes slideIn{ from{ opacity:0; transform:translateY(-14px);} to{opacity:1; transform:translateY(0);} }
+  .notif-icon{
+    width:34px; height:34px; border-radius:9px;
+    background:var(--gold);
+    color:white; font-weight:800; font-size:14px;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .notif-title{ font-size:12.5px; font-weight:700; }
+  .notif-body{ font-size:12px; color:#3a3a4a; margin-top:2px; line-height:1.4; }
+  .notif-time{ font-size:10px; color:#9a9aa5; float:right; }
+
+  /* stat rows */
+  .stat-row{ display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid #EEF0F6; font-size:13px; }
+  .stat-row:last-child{ border-bottom:none; }
+
+  .keyterms{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:12px 0; }
+  .keyterms .kt{ background:var(--navy); border-radius:12px; padding:11px 12px; }
+  .keyterms .kt.accent{ background:var(--gold); }
+  .keyterms .kt-label{ font-size:9.5px; text-transform:uppercase; letter-spacing:0.6px; color:#B9C4E8; font-weight:700; }
+  .keyterms .kt.accent .kt-label{ color:#FCEFCF; }
+  .keyterms .kt-val{ font-size:17px; font-weight:800; color:#fff; margin-top:2px; }
+
+  .know-list{ margin:0; padding:0; list-style:none; }
+  .know-list li{ display:flex; gap:9px; align-items:flex-start; font-size:12px; color:var(--ink); line-height:1.45; padding:6px 0; }
+  .know-list li .k-ico{ flex-shrink:0; width:18px; height:18px; border-radius:50%; background:var(--gold); color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .stat-label{ color:var(--muted); }
+  .stat-val{ font-weight:700; color:var(--ink); }
+
+  .compare{ display:flex; gap:10px; margin:12px 0; }
+  .compare .col{ flex:1; border-radius:12px; padding:12px; }
+  .compare .before{ background:var(--red-soft); }
+  .compare .after{ background:var(--green-soft); }
+  .compare h4{ margin:0 0 6px; font-size:11px; text-transform:uppercase; letter-spacing:1px; }
+  .compare .before h4{ color:var(--red); }
+  .compare .after h4{ color:var(--green); }
+  .compare .big{ font-size:22px; font-weight:800; }
+  .compare .sub{ font-size:11px; color:var(--muted); margin-top:2px; }
+
+  .creditor-row{ display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #EEF0F6; }
+  .creditor-row:last-child{ border-bottom:none; }
+  .creditor-name{ font-weight:600; font-size:13.5px; }
+  .creditor-amt{ font-size:13px; color:var(--muted); }
+  .check{
+    width:20px; height:20px; border-radius:50%;
+    background:var(--green); color:white;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:800; flex-shrink:0;
+    opacity:0; transform:scale(0.4);
+    transition:all .35s ease;
+  }
+  .check.done{ opacity:1; transform:scale(1); }
+
+  .consent{
+    display:flex; gap:10px; align-items:flex-start;
+    background:var(--ice-soft); border-radius:12px; padding:12px; font-size:12px; color:var(--ink);
+    margin:12px 0; line-height:1.4;
+  }
+  .consent input{ margin-top:2px; }
+
+  .gauge-wrap{ text-align:center; padding:6px 0 4px; }
+  .gauge{ width:120px; height:70px; margin:0 auto; }
+  .progressbar{ background:#E9ECF5; border-radius:8px; height:10px; overflow:hidden; margin-top:8px; }
+  .progressbar > div{ height:100%; background:var(--gold); border-radius:8px; }
+
+  .home-indicator{
+    position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
+    width:120px; height:4px; border-radius:3px; background:rgba(255,255,255,0.35);
+  }
+
+  /* thumbnail rail */
+  .thumbs{
+    display:flex; gap:10px; margin-top:22px; flex-wrap:wrap; justify-content:center; max-width:340px;
+  }
+  .thumb{
+    width:60px; height:60px; border-radius:12px;
+    background:rgba(255,255,255,0.06);
+    border:1.5px solid rgba(255,255,255,0.15);
+    color:#B9C4E8; font-size:10px; font-weight:700;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    cursor:pointer; padding:4px; line-height:1.25;
+  }
+  .thumb.active{ border-color:var(--gold); color:var(--gold); background:rgba(184,134,11,0.12); }
+
+  .side-panel{
+    width:270px;
+    color:#DCE3F6;
+    font-size:13px;
+    line-height:1.6;
+    padding-top:8px;
+  }
+  .side-panel h3{ color:var(--white); font-size:15px; margin:0 0 8px; }
+  .side-panel .step{
+    display:flex; gap:10px; margin-bottom:14px; align-items:flex-start;
+  }
+  .side-panel .num{
+    width:22px; height:22px; border-radius:50%; background:var(--gold); color:white;
+    font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+</style>
+</head>
+<body>
+
+  <div class="rail">
+    <div class="eyebrow">Clickable Prototype</div>
+    <h1>Smart EMI Consolidation Loan — Pilot Edition — Ravi's Journey</h1>
+    <p>Tap through the flow below, or jump to any screen using the thumbnails. Includes the happy path plus manual review, decline, error, partial-settlement, and appeal flows. This is a design walkthrough, not a live app — no real data is used or stored.</p>
+  </div>
+
+  <div class="stage">
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="screen">
+
+        <!-- SCREEN 1: LOCK / NOTIFICATION -->
+        <div class="screen-content lockscreen active" data-screen="1">
+          <div class="lock-time">9:41</div>
+          <div class="lock-date">Tuesday, 4 August</div>
+          <div class="notif" onclick="goTo(2)">
+            <div class="notif-icon">SG</div>
+            <div style="flex:1">
+              <div class="notif-title">Financially Fitt <span class="notif-time">now</span></div>
+              <div class="notif-body">We noticed you're managing 4 EMIs this month. Want to see if combining them into one could help?</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN 2: OFFER -->
+        <div class="screen-content" data-screen="2">
+          <div class="status-bar"><span>9:41</span><span>●●●●  📶  🔋</span></div>
+          <div class="topbar">
+            <div class="brand">FINANCIALLY FITT</div>
+            <h2>Your consolidation offer</h2>
+          </div>
+          <div class="body-pad">
+            <div class="card">
+              <span class="pill amber">PRE-QUALIFIED</span>
+              <div style="margin-top:10px; font-size:13px; color:var(--muted);">Hi Ravi, based on your repayment history, here's what combining your loans could look like.</div>
+              <div class="compare">
+                <div class="col before">
+                  <h4>Today</h4>
+                  <div class="big">4</div>
+                  <div class="sub">EMIs, 5 due dates</div>
+                </div>
+                <div class="col after">
+                  <h4>After</h4>
+                  <div class="big">1</div>
+                  <div class="sub">EMI, 1 due date</div>
+                </div>
+              </div>
+              <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin:14px 0 6px;">Your offer at a glance</div>
+              <div class="keyterms">
+                <div class="kt accent"><div class="kt-label">Total loan amount</div><div class="kt-val">₹1,20,000</div></div>
+                <div class="kt"><div class="kt-label">Monthly EMI</div><div class="kt-val">₹4,997</div></div>
+                <div class="kt"><div class="kt-label">Total tenure</div><div class="kt-val">30 months</div></div>
+                <div class="kt"><div class="kt-label">Interest rate</div><div class="kt-val">18% p.a.</div></div>
+              </div>
+              <div class="stat-row"><span class="stat-label">Total payable over full tenure</span><span class="stat-val">₹1,49,901</span></div>
+              <div class="stat-row"><span class="stat-label">vs. current combined EMI</span><span class="stat-val" style="color:var(--green)">− ₹2,393 / mo</span></div>
+            </div>
+            <div class="card">
+              <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--navy); font-weight:700; margin-bottom:2px;">Important to know</div>
+              <ul class="know-list">
+                <li><span class="k-ico">₹</span><span>This combines what you already owe — your total borrowing does not increase.</span></li>
+                <li><span class="k-ico">→</span><span>Money goes <b>directly to your 4 lenders</b>, never into your account.</span></li>
+                <li><span class="k-ico">%</span><span>18% p.a. is fixed for now — pay on time for 6 months and your rate can step down.</span></li>
+                <li><span class="k-ico">i</span><span>Nothing is decided yet. Full creditor-by-creditor detail is on the next screen.</span></li>
+              </ul>
+            </div>
+            <button class="btn" onclick="goTo(3)">Review my offer</button>
+            <button class="btn ghost" onclick="goTo(1)">Not now</button>
+            <button class="link-btn" onclick="goTo(9)" style="display:block; text-align:center; margin:2px auto 0;">Demo: show a technical-error state →</button>
+          </div>
+        </div>
+
+        <!-- SCREEN 3: REVIEW & ACCEPT -->
+        <div class="screen-content" data-screen="3">
+          <div class="status-bar"><span>9:42</span><span>●●●●  📶  🔋</span></div>
+          <div class="topbar">
+            <div class="brand">STEP 1 OF 2</div>
+            <h2>Review &amp; confirm</h2>
+          </div>
+          <div class="body-pad">
+            <div class="card">
+              <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:6px;">Loans being combined</div>
+              <div class="creditor-row"><span class="creditor-name">HDFC Bank — Personal Loan</span><span class="creditor-amt">₹48,200</span></div>
+              <div class="creditor-row"><span class="creditor-name">ICICI Bank — Credit Card</span><span class="creditor-amt">₹31,500</span></div>
+              <div class="creditor-row"><span class="creditor-name">Axis Bank — Personal Loan</span><span class="creditor-amt">₹22,800</span></div>
+              <div class="creditor-row"><span class="creditor-name">Bajaj Finance — Consumer EMI</span><span class="creditor-amt">₹17,500</span></div>
+            </div>
+            <div class="card">
+              <div class="keyterms">
+                <div class="kt accent"><div class="kt-label">Total loan amount</div><div class="kt-val">₹1,20,000</div></div>
+                <div class="kt"><div class="kt-label">Monthly EMI</div><div class="kt-val">₹4,997</div></div>
+                <div class="kt"><div class="kt-label">Total tenure</div><div class="kt-val">30 months</div></div>
+                <div class="kt"><div class="kt-label">Interest rate</div><div class="kt-val">18% p.a.</div></div>
+              </div>
+              <div class="stat-row"><span class="stat-label">Total payable over full tenure</span><span class="stat-val">₹1,49,901</span></div>
+              <div class="stat-row"><span class="stat-label">First EMI due</span><span class="stat-val">5 September 2026</span></div>
+            </div>
+            <div class="consent">
+              <input type="checkbox" id="consent" checked>
+              <label for="consent">I understand funds go <b>directly to my 4 lenders</b> to close those loans — not to my bank account.</label>
+            </div>
+            <button class="btn" onclick="goTo(6)">Confirm &amp; consolidate</button>
+            <button class="btn ghost" onclick="goTo(2)">Back</button>
+          </div>
+        </div>
+
+        <!-- SCREEN 6: VERIFYING (decision point) -->
+        <div class="screen-content" data-screen="6">
+          <div class="status-bar"><span>9:42</span><span>●●●●  📶  🔋</span></div>
+          <div class="topbar">
+            <div class="brand">STEP 2 OF 2</div>
+            <h2>Verifying your details</h2>
+          </div>
+          <div class="body-pad">
+            <div class="card" style="text-align:center;">
+              <div class="spinner"></div>
+              <div style="font-weight:700; font-size:14px; margin-top:10px;">Checking your accounts and eligibility</div>
+              <div style="font-size:12px; color:var(--muted); margin-top:4px;">This usually takes a few seconds. Most customers are approved instantly.</div>
+            </div>
+            <div class="card" style="background:var(--ice-soft); box-shadow:none;">
+              <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--navy); font-weight:700; margin-bottom:8px;">Prototype note — three real outcomes</div>
+              <div style="font-size:12px; color:var(--ink); line-height:1.5; margin-bottom:10px;">Behind this loading screen, one of three things actually happens. Tap below to preview each:</div>
+              <button class="btn secondary" onclick="goTo(4)" style="margin-top:6px;">① Approved — instant (most common)</button>
+              <button class="btn secondary" onclick="goTo(7)" style="margin-top:8px;">② Needs manual review</button>
+              <button class="btn secondary" onclick="goTo(8)" style="margin-top:8px;">③ Declined</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN 7: MANUAL REVIEW -->
+        <div class="screen-content" data-screen="7">
+          <div class="status-bar"><span>9:43</span><span>●●●●  📶  🔋</span></div>
+          <div class="topbar">
+            <div class="brand">FINANCIALLY FITT</div>
+            <h2>Taking a closer look</h2>
+          </div>
+          <div class="body-pad">
+            <div class="card">
+              <span class="pill amber">MANUAL REVIEW</span>
+              <div style="font-weight:700; font-size:14.5px; margin-top:10px;">Your application needs a closer look</div>
+              <div style="font-size:12.5px; color:var(--muted); margin-top:6px; line-height:1.5;">Nothing is wrong — one or two details on your file (like a recent address change) need a quick manual check by our risk team before we can settle your loans.</div>
+            </div>
+            <div class="card">
+              <div class="status-track">
+                <div class="st-row"><div class="st-dot done">✓</div><div><div class="st-label">Application submitted</div></div></div>
+                <div class="st-line"></div>
+                <div class="st-row"><div class="st-dot current">●</div><div><div class="st-label">Under manual review</div><div class="st-sub">Typically finishes within 1 business day</div></div></div>
+                <div class="st-line"></div>
+                <div class="st-row"><div class="st-dot todo"></div><div><div class="st-label">Decision &amp; settlement</div></div></div>
+              </div>
+            </div>
+            <div class="card" style="background:var(--ice-soft); box-shadow:none;">
+              <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--navy); font-weight:700; margin-bottom:2px;">While you wait</div>
+              <div style="font-size:12px; color:var(--ink); line-height:1.5;">Your existing 4 EMIs continue as normal — nothing changes until a decision is made. We'll notify you the moment it's ready.</div>
+            </div>
+            <button class="btn" onclick="goTo(5)">Notify me — go to dashboard</button>
+            <div style="text-align:center; margin-top:10px;">
+              <button class="link-btn" onclick="goTo(4)">Demo: see the approved outcome →</button><br>
+              <button class="link-btn" onclick="goTo(8)">Demo: see the declined outcome →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN 8: DECLINED -->
+        <div class="screen-content" data-screen="8">
+          <div class="status-bar"><span>9:43</span><span>●●●●  📶  🔋</span></div>
+          <div class="topbar">
+            <div class="brand">FINANCIALLY FITT</div>
+            <h2>We can't offer this right now</h2>
+          </div>
+          <div class="body-pad">
+            <div class="card">
+              <span class="pill red">NOT APPROVED TODAY</span>
+              <div style="font-size:12.5px; color:var(--ink); margin-top:10px; line-height:1.5;">We're not able to offer consolidation on these terms right now. This is based on:</div>
+              <ul class="reason-list">
+                <li>A payment on one account was more than 30 days late in the last 3 months</li>
+                <li>Combined EMI would exceed our current affordability threshold</li>
+              </ul>
+            </div>
+            <div class="card" style="background:var(--green-soft); box-shadow:none;">
+              <div style="font-size:12px; color:var(--ink); line-height:1.5;"><b>This does not affect your existing loans, your credit score, or your relationship with us.</b> Your 4 EMIs continue exactly as they are today.</div>
+            </div>
+            <button class="btn" onclick="goTo(11)">Request a second look</button>
+            <button class="btn ghost" onclick="goTo(1)">Back to home</button>
+          </div>
+        </div>
+
+        <!-- SCREEN 9: ERROR / TECHNICAL ISSUE -->
+        <div class="screen-content" data-screen="9">
+          <div class="status-bar"><span>9:41</span><span>●●●●  📶  🔋</span></div>
+          <div class="topbar">
+            <div class="brand">FINANCIALLY FITT</div>
+            <h2>Something went wrong</h2>
+          </div>
+          <div class="body-pad">
+            <div class="card" style="text-align:center;">
+              <div class="big-icon">⚠️</div>
+              <div style="font-weight:700; font-size:14.5px; margin-top:6px;">We couldn't fetch your account details</div>
+              <div style="font-size:12.5px; color:var(--muted); margin-top:6px; line-height:1.5;">Your Account Aggregator connection timed out. This is usually temporary and nothing has been charged or changed.</div>
+            </div>
+            <button class="btn" onclick="goTo(2)">Try again</button>
+            <button class="btn ghost" onclick="goTo(1)">Back to home</button>
+            <div class="stat-row" style="margin-top:6px;"><span class="stat-label">Still stuck?</span><span class="stat-val" style="color:var(--navy); font-size:12px;">Contact support</span></div>
+          </div>
+        </div>
+
+        <!-- SCREEN 10: PARTIAL SETTLEMENT -->
+        <div class="screen-content" data-screen="10">
+          <div class="status-bar"><span>9:43</span><span>●●●●  📶  🔋</span></div>
+          <div class="topbar">
+            <div class="brand">STEP 2 OF 2</div>
+            <h2>Settling your loans</h2>
+          </div>
+          <div class="body-pad">
+            <div class="card">
+              <div style="font-size:12px; color:var(--muted); margin-bottom:8px;">3 of 4 lenders are settled. One needs a bit longer.</div>
+              <div class="creditor-row"><span class="creditor-name">HDFC Bank</span><span class="check done">✓</span></div>
+              <div class="creditor-row"><span class="creditor-name">ICICI Bank</span><span class="check done">✓</span></div>
+              <div class="creditor-row"><span class="creditor-name">Axis Bank</span><span class="check done">✓</span></div>
+              <div class="creditor-row"><span class="creditor-name">Bajaj Finance</span><span class="pill amber">PENDING</span></div>
+            </div>
+            <div class="card" style="background:var(--gold-soft); box-shadow:none;">
+              <div style="font-size:12px; color:var(--ink); line-height:1.5;"><b>Bajaj Finance didn't confirm within the usual window.</b> We're retrying automatically every few hours. You don't need to do anything — we'll notify you the moment it clears, usually within 2 business days.</div>
+            </div>
+            <div class="card">
+              <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:4px;">In the meantime</div>
+              <div style="font-size:12px; color:var(--ink); line-height:1.5;">Keep paying your Bajaj Finance EMI as usual until we confirm it's closed — this protects your credit file. The other 3 are already closed and off your plate.</div>
+            </div>
+            <button class="btn" onclick="goTo(5)">Continue to my dashboard</button>
+          </div>
+        </div>
+
+        <!-- SCREEN 11: APPEAL -->
+        <div class="screen-content" data-screen="11">
+          <div class="status-bar"><span>9:44</span><span>●●●●  📶  🔋</span></div>
+          <div class="topbar">
+            <div class="brand">FINANCIALLY FITT</div>
+            <h2>Request a second look</h2>
+          </div>
+          <div class="body-pad">
+            <div class="card">
+              <div style="font-size:12px; color:var(--muted); margin-bottom:10px;">Share anything that adds context — an update to your income, or the late payment explained. Our risk team reviews every request personally.</div>
+              <div class="field">
+                <label>Add a supporting document (optional)</label>
+                <div class="upload-row"><span>📎 Latest salary slip</span><span style="color:var(--navy); font-weight:700;">Upload</span></div>
+                <div class="upload-row"><span>📎 Bank statement, last 3 months</span><span style="color:var(--navy); font-weight:700;">Upload</span></div>
+              </div>
+              <div class="field">
+                <label>A note to our risk team (optional)</label>
+                <textarea class="notefield" placeholder="e.g. The late payment was a one-off due to a bank holiday delay..."></textarea>
+              </div>
+            </div>
+            <button class="btn" onclick="goTo(12)">Submit for review</button>
+            <button class="btn ghost" onclick="goTo(8)">Back</button>
+          </div>
+        </div>
+
+        <!-- SCREEN 12: APPEAL SUBMITTED / STATUS -->
+        <div class="screen-content" data-screen="12">
+          <div class="status-bar"><span>9:44</span><span>●●●●  📶  🔋</span></div>
+          <div class="topbar">
+            <div class="brand">FINANCIALLY FITT</div>
+            <h2>Request submitted</h2>
+          </div>
+          <div class="body-pad">
+            <div class="card" style="text-align:center;">
+              <div class="big-icon">📨</div>
+              <div style="font-weight:700; font-size:14.5px; margin-top:4px;">We've got your request</div>
+              <div style="font-size:12.5px; color:var(--muted); margin-top:4px;">Our risk team will respond within 3 business days.</div>
+            </div>
+            <div class="card">
+              <div class="status-track">
+                <div class="st-row"><div class="st-dot done">✓</div><div><div class="st-label">Submitted</div><div class="st-sub">Just now</div></div></div>
+                <div class="st-line"></div>
+                <div class="st-row"><div class="st-dot current">●</div><div><div class="st-label">Under review</div><div class="st-sub">Risk team, up to 3 business days</div></div></div>
+                <div class="st-line"></div>
+                <div class="st-row"><div class="st-dot todo"></div><div><div class="st-label">Final decision</div></div></div>
+              </div>
+            </div>
+            <button class="btn" onclick="goTo(1)">Back to home</button>
+          </div>
+        </div>
+
+        <!-- SCREEN 4: SETTLEMENT -->
+        <div class="screen-content" data-screen="4">
+          <div class="status-bar"><span>9:43</span><span>●●●●  📶  🔋</span></div>
+          <div class="topbar">
+            <div class="brand">STEP 2 OF 2</div>
+            <h2>Settling your loans</h2>
+          </div>
+          <div class="body-pad">
+            <div class="card">
+              <div style="font-size:12px; color:var(--muted); margin-bottom:8px;">Paying each lender directly — this usually takes a few minutes.</div>
+              <div class="creditor-row"><span class="creditor-name">HDFC Bank</span><span class="check" id="c1">✓</span></div>
+              <div class="creditor-row"><span class="creditor-name">ICICI Bank</span><span class="check" id="c2">✓</span></div>
+              <div class="creditor-row"><span class="creditor-name">Axis Bank</span><span class="check" id="c3">✓</span></div>
+              <div class="creditor-row"><span class="creditor-name">Bajaj Finance</span><span class="check" id="c4">✓</span></div>
+            </div>
+            <div class="card" id="doneCard" style="text-align:center; opacity:0; transition:opacity .4s;">
+              <div style="font-size:34px;">✅</div>
+              <div style="font-weight:700; font-size:15px; margin-top:4px;">All 4 loans closed</div>
+              <div style="font-size:12px; color:var(--muted); margin-top:2px;">Your single EMI starts next month.</div>
+            </div>
+            <button class="btn" onclick="goTo(5)" id="continueBtn" style="opacity:0; pointer-events:none;">Go to my dashboard</button>
+            <div style="text-align:center; margin-top:10px;">
+              <button class="link-btn" onclick="goTo(10)">Demo: see a partial-settlement delay →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN 5: DASHBOARD -->
+        <div class="screen-content" data-screen="5">
+          <div class="status-bar"><span>9:44</span><span>●●●●  📶  🔋</span></div>
+          <div class="topbar">
+            <div class="brand">FINANCIALLY FITT</div>
+            <h2>Hi Ravi 👋</h2>
+          </div>
+          <div class="body-pad">
+            <div class="card" style="background:var(--navy); box-shadow:none;">
+              <div style="color:var(--ice); font-size:11px; text-transform:uppercase; letter-spacing:1px;">Your single EMI</div>
+              <div style="color:white; font-size:28px; font-weight:800; margin-top:4px;">₹4,997<span style="font-size:13px; font-weight:600; color:#B9C4E8;"> / month</span></div>
+              <div style="color:#B9C4E8; font-size:12px; margin-top:2px;">Next due: 5 September · one date, one lender</div>
+              <div style="display:flex; gap:16px; margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.15);">
+                <div><div style="color:#8EA0D6; font-size:10px; text-transform:uppercase;">Loan amount</div><div style="color:#fff; font-size:14px; font-weight:700;">₹1,20,000</div></div>
+                <div><div style="color:#8EA0D6; font-size:10px; text-transform:uppercase;">Tenure left</div><div style="color:#fff; font-size:14px; font-weight:700;">28 of 30 mo</div></div>
+                <div><div style="color:#8EA0D6; font-size:10px; text-transform:uppercase;">Rate</div><div style="color:#fff; font-size:14px; font-weight:700;">18% p.a.</div></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="font-size:12px; font-weight:700; color:var(--navy);">Credit score trend</div>
+                <span class="pill green">▲ IMPROVING</span>
+              </div>
+              <svg viewBox="0 0 240 60" style="width:100%; height:50px; margin-top:8px;">
+                <polyline points="0,45 40,42 80,38 120,30 160,24 200,16 240,10" fill="none" stroke="#2E7D32" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+
+            <div class="card">
+              <div style="font-size:12px; font-weight:700; color:var(--navy); margin-bottom:4px;">On-time payments to your rate step-down</div>
+              <div class="progressbar"><div style="width:33%"></div></div>
+              <div style="font-size:11px; color:var(--muted); margin-top:6px;">2 of 6 on-time payments made</div>
+            </div>
+
+            <div class="card" style="opacity:0.55;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="font-size:12px; font-weight:700; color:var(--navy);">🔒 Next offer unlocks after milestone</div>
+              </div>
+              <div style="font-size:11.5px; color:var(--muted); margin-top:4px;">Keep paying on time to unlock a pre-approved next product.</div>
+            </div>
+
+            <button class="btn secondary" onclick="goTo(1)" style="margin-top:4px;">Restart walkthrough</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="home-indicator"></div>
+    </div>
+
+    <div class="side-panel">
+      <h3>What you're looking at</h3>
+      <div class="step"><div class="num">1</div><div><b>Detect.</b> Module 1 flags rising stress silently — Ravi sees nothing until the notification.</div></div>
+      <div class="step"><div class="num">2</div><div><b>Offer.</b> Pre-qualified terms shown before any commitment — before/after framing, not a sales pitch.</div></div>
+      <div class="step"><div class="num">3</div><div><b>Review &amp; consent.</b> Explicit consent that funds go to creditors, not to Ravi — the direct-settlement design made visible to the user.</div></div>
+      <div class="step"><div class="num">4</div><div><b>Settle.</b> Each creditor paid and confirmed individually — builds trust through visible progress.</div></div>
+      <div class="step"><div class="num">5</div><div><b>Live with it.</b> One EMI, credit-score trend, and a milestone-gated path to a better rate and the next product.</div></div>
+      <div style="margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.15);">
+        <b style="color:var(--white); font-size:13px;">Edge cases now covered</b>
+      </div>
+      <div class="step"><div class="num">6</div><div><b>Verifying.</b> The real decision point after Review — routes to one of three outcomes below.</div></div>
+      <div class="step"><div class="num">7</div><div><b>Manual review.</b> Flagged for a human check; existing EMIs continue unaffected while it's pending.</div></div>
+      <div class="step"><div class="num">8</div><div><b>Declined.</b> Clear reasons shown, plus an explicit reassurance that nothing about the customer's existing loans changes.</div></div>
+      <div class="step"><div class="num">9</div><div><b>Error state.</b> A technical failure (Account Aggregator timeout) with a retry path, not a dead end.</div></div>
+      <div class="step"><div class="num">10</div><div><b>Partial settlement.</b> One of four creditors doesn't confirm in time — shown transparently with a clear "what to do meanwhile."</div></div>
+      <div class="step"><div class="num">11</div><div><b>Appeal.</b> After a decline, the customer can add documents/context and track the review to a decision.</div></div>
+      <div style="margin-top:18px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.15); font-size:12px; color:#9FADD9;">
+        Use this to pressure-test copy and flow with real customers — the interview guide's Section 4 asks directly whether this notification style feels reassuring or intrusive.
+      </div>
+    </div>
+  </div>
+
+  <div class="thumbs" id="thumbs"></div>
+
+<script>
+  const screens = [1,2,3,6,7,8,9,10,11,12,4,5];
+  const labels = ["Lock\nscreen","Offer","Review &\nconsent","Verifying\n(branch)","Manual\nreview","Declined","Error\nstate","Partial\nsettlement","Appeal","Appeal\nstatus","Settling","Dashboard"];
+  const thumbsEl = document.getElementById('thumbs');
+  screens.forEach((n,i)=>{
+    const t = document.createElement('div');
+    t.className = 'thumb' + (n===1?' active':'');
+    t.id = 'thumb-'+n;
+    t.innerText = labels[i];
+    t.onclick = ()=>goTo(n);
+    thumbsEl.appendChild(t);
+  });
+
+  function goTo(n){
+    document.querySelectorAll('.screen-content').forEach(el=>el.classList.remove('active'));
+    document.querySelector('.screen-content[data-screen="'+n+'"]').classList.add('active');
+    document.querySelectorAll('.thumb').forEach(el=>el.classList.remove('active'));
+    document.getElementById('thumb-'+n).classList.add('active');
+
+    if(n === 4){
+      ['c1','c2','c3','c4'].forEach(id=>document.getElementById(id).classList.remove('done'));
+      document.getElementById('doneCard').style.opacity = 0;
+      document.getElementById('continueBtn').style.opacity = 0;
+      document.getElementById('continueBtn').style.pointerEvents = 'none';
+      let delay = 500;
+      ['c1','c2','c3','c4'].forEach((id,i)=>{
+        setTimeout(()=>{ document.getElementById(id).classList.add('done'); }, delay + i*550);
+      });
+      setTimeout(()=>{
+        document.getElementById('doneCard').style.opacity = 1;
+        document.getElementById('continueBtn').style.opacity = 1;
+        document.getElementById('continueBtn').style.pointerEvents = 'auto';
+      }, delay + 4*550 + 300);
+    }
+  }
+</script>
+
+</body>
+</html>
